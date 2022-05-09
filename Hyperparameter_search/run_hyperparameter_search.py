@@ -43,6 +43,9 @@ def split(df, need_emoji = True, random_state = 0):
         X_test = no_emoji(X_test)
     return X_train, X_val, X_test, y_train, y_val, y_test
 
+import os
+print(f'path :{os.getcwd()}')
+
 df = pd.read_csv('/scratch/ryl7673/NLU/NLU_PROJECT/Data/processed_data.csv')
 df = df.dropna().drop("Unnamed: 0", axis = 1)
 df.head()
