@@ -132,6 +132,6 @@ print(
         backend="ray",
         search_alg=BayesOptSearch(), 
         mode="max", 
-        local_dir="/scratch/ryl7673/NLU/NLU_PROJECT/models"
+        local_dir="/scratch/ryl7673/NLU/NLU_PROJECT/Hyperparameter_search/models"
     )
 )
