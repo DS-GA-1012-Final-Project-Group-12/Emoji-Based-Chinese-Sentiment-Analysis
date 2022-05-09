@@ -109,7 +109,7 @@ def compute_metrics(eval_pred):
     labels = eval_pred.label_ids
     preds = eval_pred.predictions.argmax(-1)
 
-    tn, fp, fn, tp = confusion_matrix([0, 1, 0, 1], [1, 1, 1, 0]).ravel()
+    tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
     accuracy = accuracy_score(labels, preds)
     return {"accuracy":accuracy, 'tn':tn, 'fp':fp, 'fn':fn, 'tp':tp}
 
