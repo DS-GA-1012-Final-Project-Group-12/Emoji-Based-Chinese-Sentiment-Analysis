@@ -47,7 +47,7 @@ df = pd.read_csv('../Data/processed_Dianping_data.csv')
 df = df.dropna().drop("Unnamed: 0", axis = 1)
 df.head()
 
-df_emoji = df[df['has_emoji'] == 1]
+df_emoji = df
 # data with emoji
 X_train_1, X_val_1, X_test_1, y_train_1, y_val_1, y_test_1 = split(df_emoji)
 # same data with emoji removed
