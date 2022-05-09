@@ -11,7 +11,6 @@ from transformers import Trainer, TrainingArguments
 from ray import tune
 from ray.tune.suggest.bayesopt import BayesOptSearch
 
-from IPython.display import clear_output
 import logging
 logging.basicConfig(level=logging.ERROR)
 
