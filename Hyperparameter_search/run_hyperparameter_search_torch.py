@@ -1,11 +1,14 @@
 import pandas as pd
+import numpy as np
+from tqdm.auto import tqdm
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 import torch
+from torch.optim import Adam
 from torch.utils.data import Dataset, DataLoader
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, get_linear_schedule_with_warmup
 from transformers import Trainer, TrainingArguments
 
 from ray import tune
@@ -79,57 +82,35 @@ train_dataset = WeiboSentDataset(X_train_encodings, y_train_1)
 val_dataset = WeiboSentDataset(X_val_encodings, y_val_1)
 test_dataset = WeiboSentDataset(X_test_encodings, y_test_1)
 
-training_args = TrainingArguments(
-    output_dir='./results',          # output directory
-    lr_scheduler_type='linear_with_warmup', # learning rate scheduler
-    num_train_epochs=0.01,              # total number of training epochs
-    per_device_train_batch_size=16,  # batch size per device during training
-    per_device_eval_batch_size=64,   # batch size for evaluation
-    warmup_ratio=0.1,                # number of warmup steps for learning rate scheduler
-    #learning_rate=2e-5,              # learning rate or step size
-    adam_epsilon=1e-6,
-    adam_beta1=0.9,
-    adam_beta2=0.98,
-    weight_decay=0.01,
-    logging_dir='./logs',            # directory for storing logs
-    logging_steps=100,
-)
+train_loader = DataLoader(train_dataset, shuffle=True, batch_size=16)
+val_loader = DataLoader(val_dataset, batch_size=64)
+test_loader = DataLoader(test_dataset, batch_size=64)
 
-def hp_space(trial) :
-    return {
-        "learning_rate": tune.loguniform(1e-5, 5e-5)
-    }
+#loop
+model = AutoModelForSequenceClassification.from_pretrained("bert-base-cased", num_labels=5)
+optimizer = Adam(model.parameters(), lr=2e-5, adam_epsilon=1e-6, adam_beta1=0.9, adam_beta2=0.98)
 
-def model_init() :
-    return AutoModelForSequenceClassification.from_pretrained('uer/chinese_roberta_L-12_H-768')
+num_epochs = 0.1
+warmup_ratio = 0.1
+num_training_steps = num_epochs * len(train_dataset)
+lr_scheduler = get_linear_schedule_with_warmup(optimizer, warmup_ratio * num_training_steps, num_training_steps, weight_decay=0.1)
 
-def compute_metrics(eval_pred):
-    labels = eval_pred.label_ids
-    preds = eval_pred.predictions.argmax(-1)
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+model.to(device);
 
-    tn, fp, fn, tp = confusion_matrix(labels, preds).ravel()
-    accuracy = accuracy_score(labels, preds)
-    return {"accuracy":accuracy, 'tn':tn, 'fp':fp, 'fn':fn, 'tp':tp}
+progress_bar = tqdm(range(num_training_steps))
 
-trainer = Trainer(
-    args=training_args,
-    train_dataset=train_dataset,
-    eval_dataset=val_dataset,
-    model_init=model_init,
-    compute_metrics=compute_metrics,
-    tokenizer=tokenizer
-)
+model.train()
+for epoch in range(num_epochs):
+    for batch in train_loader:
+        batch = {k: v.to(device) for k, v in batch.items()}
+        outputs = model(**batch)
+        loss = outputs.loss
+        loss.backward()
 
-# Bayesian Optimisation
-print(
-    trainer.hyperparameter_search(
-        hp_space=hp_space,
-        compute_objective=lambda x:x["eval_accuracy"],
-        n_trials=2,
-        direction="maximize",
-        backend="ray",
-        search_alg=BayesOptSearch(), 
-        mode="max", 
-        local_dir="/scratch/ryl7673/NLU/NLU_PROJECT/Hyperparameter_search/models"
-    )
-)
+        optimizer.step()
+        lr_scheduler.step()
+        optimizer.zero_grad()
+        progress_bar.update(1)
+        break
+
