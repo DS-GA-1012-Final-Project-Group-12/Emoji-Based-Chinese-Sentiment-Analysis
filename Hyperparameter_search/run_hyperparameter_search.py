@@ -81,7 +81,7 @@ test_dataset = WeiboSentDataset(X_test_encodings, y_test_1)
 
 training_args = TrainingArguments(
     output_dir='./results',          # output directory
-    lr_scheduler_type='constant_with_warmup', # learning rate scheduler
+    lr_scheduler_type='linear_with_warmup', # learning rate scheduler
     num_train_epochs=0.01,              # total number of training epochs
     per_device_train_batch_size=16,  # batch size per device during training
     per_device_eval_batch_size=64,   # batch size for evaluation
