@@ -82,7 +82,7 @@ test_dataset = WeiboSentDataset(X_test_encodings, y_test_1)
 training_args = TrainingArguments(
     output_dir='./results',          # output directory
     lr_scheduler_type='constant_with_warmup', # learning rate scheduler
-    num_train_epochs=3,              # total number of training epochs
+    num_train_epochs=0.1,              # total number of training epochs
     per_device_train_batch_size=16,  # batch size per device during training
     per_device_eval_batch_size=64,   # batch size for evaluation
     warmup_ratio=0.1,                # number of warmup steps for learning rate scheduler
@@ -126,7 +126,7 @@ print(
     trainer.hyperparameter_search(
         hp_space=hp_space,
         compute_objective=lambda x:x["eval_accuracy"],
-        n_trials=10,
+        n_trials=2,
         direction="maximize",
         backend="ray",
         search_alg=BayesOptSearch(), 
