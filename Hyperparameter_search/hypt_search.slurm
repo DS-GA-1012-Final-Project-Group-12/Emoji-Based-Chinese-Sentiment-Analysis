@@ -6,7 +6,7 @@
 #SBATCH --export=ALL
 #SBATCH --time=04:00:00
 #SBATCH --gres=gpu:1
-#SBATCH --mem=20G
+#SBATCH --mem=32G
 #SBATCH -c 4
 
 ## TODO: Run your hyperparameter search in a singularity container. Remember to 
