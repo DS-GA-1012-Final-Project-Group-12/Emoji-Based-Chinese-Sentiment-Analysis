@@ -1,0 +1,13 @@
+lr : 2.238721138568338e-05
+Epoch: 0
+Train : Counter({'tn': tensor(26938), 'tp': tensor(25957), 'fn': tensor(3269), 'fp': tensor(1112)})
+Validation : Counter({'tn': tensor(8900), 'tp': tensor(8673), 'fn': tensor(1120), 'fp': tensor(399)})
+Test : Counter({'tn': tensor(9081), 'tp': tensor(8571), 'fn': tensor(1080), 'fp': tensor(361)})
+Epoch: 1
+Train : Counter({'tp': tensor(28268), 'tn': tensor(25790), 'fp': tensor(2260), 'fn': tensor(958)})
+Validation : Counter({'tp': tensor(9477), 'tn': tensor(8534), 'fp': tensor(765), 'fn': tensor(316)})
+Test : Counter({'tp': tensor(9338), 'tn': tensor(8679), 'fp': tensor(763), 'fn': tensor(313)})
+Epoch: 2
+Train : Counter({'tp': tensor(27228), 'tn': tensor(26696), 'fn': tensor(1998), 'fp': tensor(1354)})
+Validation : Counter({'tp': tensor(9122), 'tn': tensor(8807), 'fn': tensor(671), 'fp': tensor(492)})
+Test : Counter({'tp': tensor(9005), 'tn': tensor(8993), 'fn': tensor(646), 'fp': tensor(449)})
