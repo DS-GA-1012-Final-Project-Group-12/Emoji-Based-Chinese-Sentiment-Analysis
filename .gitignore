@@ -139,3 +139,6 @@ data/
 
 # Model
 trained_model/
+
+# figure
+figure/
