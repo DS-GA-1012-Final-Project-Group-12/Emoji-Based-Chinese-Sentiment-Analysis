@@ -130,6 +130,12 @@ dmypy.json
 
 # Checkpoint
 results/
+checkpoints/
+logs/
+
+# Data
+Data/
+data/
 
 # Model
 trained_model/
